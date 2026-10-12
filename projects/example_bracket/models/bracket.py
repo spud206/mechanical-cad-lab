@@ -14,7 +14,9 @@ class BracketParams:
     hole_diameter: float = 5.5
 
 
-def build(params: BracketParams = BracketParams()) -> cq.Workplane:
+def build(params: BracketParams | None = None) -> cq.Workplane:
+    if params is None:
+        params = BracketParams()
     base = cq.Workplane("XY").box(params.width, params.depth, params.thickness)
     upright = (
         cq.Workplane("XZ")
