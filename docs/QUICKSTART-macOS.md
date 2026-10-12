@@ -1,148 +1,154 @@
-# Quickstart: nieuwe macOS-ontwikkellaptop
+# Quickstart — eigen CAD-repository vanaf de mechanical-cad-lab-template (macOS)
 
-Deze handleiding gaat uit van een lege Mac (Apple Silicon of Intel), een bestaande GitHub-repository `mechanical-cad-lab` en een werkende internetverbinding. Alle Python-, CAD- en Codex-tools draaien **in de devcontainer**. Op de Mac staan alleen de ontwikkelapplicaties en Git.
+Deze handleiding is bedoeld voor een **mechanical engineer met een nieuwe Mac**. `spud206/mechanical-cad-lab` is uitsluitend de gedeelde *basis/template*. Elke engineer maakt een **eigen GitHub-repository** voor CAD-projecten, met eigen Git-geschiedenis, branches, modellen en exports. Werk en push nooit rechtstreeks naar de template, tenzij je de template zelf onderhoudt.
 
-## 1. Accounts
+## 1. Accounts en hostsoftware
 
-- Een GitHub-account met toegang tot de repository.
-- Een ChatGPT-account met toegang tot Codex CLI.
-- Adminrechten op de Mac voor het installeren van software.
+Benodigd: een GitHub-account (met toegang tot de template als die privé is), een ChatGPT-account met Codex-toegang, adminrechten op macOS en voldoende schijfruimte voor Docker en CAD-dependencies.
 
-## 2. Installeer de host-applicaties
+1. Installeer [Visual Studio Code](https://code.visualstudio.com/download) en de Microsoft-extensie **Dev Containers** (`ms-vscode-remote.remote-containers`).
+2. Installeer [Docker Desktop voor macOS](https://docs.docker.com/desktop/setup/install/mac-install/) voor Apple Silicon of Intel en start Docker Desktop.
+3. Controleer op de Mac in Terminal `git --version`; installeer zo nodig Apple Command Line Tools met `xcode-select --install`.
+4. Installeer [Homebrew](https://brew.sh/) als het ontbreekt; voer vervolgens uit:
 
-1. Installeer **Visual Studio Code** vanaf https://code.visualstudio.com/download en verplaats de applicatie naar **Programma's**.
-2. Installeer **Docker Desktop for Mac** (kies Apple Silicon of Intel) vanaf https://docs.docker.com/desktop/setup/install/mac-install/. Start Docker Desktop en voltooi de eerste configuratie.
-3. Installeer **Git** indien nog niet aanwezig. Open Terminal en voer `git --version` uit. macOS kan aanbieden Xcode Command Line Tools te installeren; accepteer dat. Controleer daarna opnieuw met `git --version`.
-4. Installeer **Git LFS** op de host via https://git-lfs.com/ of via Homebrew als die al aanwezig is: `brew install git-lfs`. Daarna: `git lfs install`. Git LFS is nodig voor CAD-referentiebestanden die door LFS beheerd worden.
-5. Controleer in Terminal `docker version` en `git --version`. Docker Desktop moet actief zijn.
-
-**Niet installeren op de host:** Python, conda/mamba, CadQuery, OpenCascade/OCP, Node.js of Codex CLI. Die zitten in de devcontainer.
-
-## 3. Meld je aan bij GitHub en clone op de host
-
-1. Open Terminal **op de Mac** (niet in een container).
-2. Configureer Git-identiteit (vervang de voorbeeldwaarden):
-
-   ```bash
-   git config --global user.name "Voornaam Achternaam"
-   git config --global user.email "jij@example.com"
-   git config --global init.defaultBranch main
-   git lfs install
-   ```
-
-3. Maak een ontwikkelmap en clone de bestaande repo op de **host**:
-
-   ```bash
-   mkdir -p ~/Development
-   cd ~/Development
-   git clone https://github.com/spud206/mechanical-cad-lab.git
-   cd mechanical-cad-lab
-   git lfs pull
-   ```
-
-   Vervang `ORGANISATIE` en de repositorynaam door de daadwerkelijke GitHub-URL. Meld je aan via je GitHub-credential manager/browser wanneer Git hierom vraagt. GitHub accepteert geen gewoon accountwachtwoord voor HTTPS Git-operaties.
-
-## 4. Configureer VS Code
-
-1. Open VS Code en ga naar **Extensions** (`Cmd+Shift+X`).
-2. Installeer **Dev Containers** van Microsoft (`ms-vscode-remote.remote-containers`).
-3. Open de Command Palette (`Cmd+Shift+P`), typ **Shell Command: Install 'code' command in PATH** en voer dit uit als die opdracht beschikbaar is. Dit is optioneel; VS Code kan de repo ook via **File > Open Folder** openen.
-4. De repositoryconfiguratie installeert de extra Python-, Jupyter-, Ruff- en CAD-viewerextensies automatisch in de container.
-
-
-
-4. Controleer dat `.git` op de host aanwezig is: `git status -sb`. Gebruik **niet** de VS Code-optie 'Clone Repository in Container Volume'; we willen één working tree op de Mac.
-
-## 5. Start de devcontainer
-
-1. Open op de Mac de hostmap `~/Development/mechanical-cad-lab` in VS Code (`code .` vanuit die map of File > Open Folder).
-2. `Cmd+Shift+P` → **Dev Containers: Reopen in Container**.
-3. VS Code bouwt de Docker-image en installeert de ontwikkeltools. Eerste build kan afhankelijk van netwerk en hardware langer duren.
-4. Open **Terminal > New Terminal**. Deze terminal hoort nu in Linux te draaien. Controleer:
-
-   ```bash
-   pwd
-   echo "$MECHCAD_DEVCONTAINER"
-   python --version
-   python -c 'import cadquery; print(cadquery.__version__)'
-   codex --version
-   git status -sb
-   locale
-   date +'%Z %z'
-   ```
-
-   Verwacht: workspace onder `/workspaces/`, marker `1`, Python/CadQuery/Codex beschikbaar, timezone Europe/Amsterdam en dezelfde Git branch als de host.
-
-## 6. Codex aanmelden met normale browser-OAuth op de Mac
-
-Codex draait in de **devcontainer**, terwijl Safari op **macOS** draait. De normale browserlogin gebruikt `http://localhost:1455/auth/callback` (eventueel fallbackpoort `1457`). VS Code moet die lokale callback doorsturen naar Codex in de container. Daarom staan beide poorten in `.devcontainer/devcontainer.json` onder `forwardPorts`, met `requireLocalPort` aan. Publiceer de callback niet op het LAN/internet.
-
-1. Open de repository via **Dev Containers: Reopen in Container**. Open daarna in VS Code **Ports** (Terminal-paneel → Ports). Controleer dat poort **1455** doorgestuurd is naar lokale poort **1455** op de Mac. Controleer ook poort **1457** als fallback. Als de poort nog niet actief is: kies **Forward a Port**, voer `1455` in, en verifieer dat de lokale poort gelijk blijft. VS Code kan dit pas beschikbaar maken wanneer een proces daadwerkelijk luistert.
-2. Zorg dat geen andere lokale Codex-app, ander devcontainer-loginproces of service poort 1455 op je Mac bezet houdt. Als VS Code de poort stilzwijgend naar 1456 hernummerd heeft, werkt de OAuth-redirect niet; beëindig het conflicterende proces en stel forwarding op **1455 → 1455** in.
-3. Voer in de **devcontainerterminal** uit:
-
-   ```bash
-   codex login
-   ```
-
-4. Open de getoonde ChatGPT/OpenAI-aanmeldlink in **Safari op de Mac**. Rond het inloggen af. De browser stuurt de callback naar `localhost:1455`; VS Code routeert deze naar de actieve Codex-loginserver in de container.
-5. Controleer in de **devcontainerterminal**:
-
-   ```bash
-   codex login status
-   codex
-   ```
-
-**Geen device-code-login**: gebruik niet `--device-auth`. Kopieer geen OAuth-tokens of `auth.json` tussen host en container. De container gebruikt een eigen persistent Docker-volume voor `/home/vscode/.codex`, waardoor de login doorgaans behouden blijft na rebuilds zolang het volume bestaat. De host-`~/.codex` is niet gemount.
-
-**Als de browser meldt dat localhost niet bereikbaar is:** laat `codex login` draaien; controleer de VS Code Ports-weergave (geen willekeurige andere lokale poort), of de loginserver actief is en of je niet per ongeluk host-Codex gestart hebt. Eventueel in een tweede containerterminal: `ss -lnt | grep -E ':1455|:1457'`. Begin een nieuwe login als de eerdere poging verlopen is. De callback-URL kan tijdelijke tokens bevatten: deel die URL niet en plak hem niet in logs of tickets.
-
-## 7. Toestemmingen, bubblewrap en beveiliging
-
-De repositoryconfiguratie installeert containerlokaal `~/.codex/config.toml` met:
-
-```toml
-approval_policy = "never"
-sandbox_mode = "danger-full-access"
+```bash
+brew install git-lfs
+git lfs install
+git lfs version
 ```
 
-Dit is een **bewuste uitzondering binnen deze specifieke devcontainer**: Codex vraagt niet telkens goedkeuring en hoeft niet op een geneste bubblewrap-sandbox te vertrouwen. Codex kan echter alle bestanden benaderen waartoe de Linux-container toegang heeft, inclusief de gemounte repository en zijn eigen authenticatiegegevens. Er wordt geen Docker-socket, `--privileged` of brede host-home-mount gebruikt.
+5. Optioneel: installeer GitHub CLI met `brew install gh` en voer `gh auth login` uit. GitHub-toegang via HTTPS en browser kan ook.
 
-`AGENTS.md` spreekt af dat Codex niet zelf commit/push doet zonder expliciete instructie, maar dat is een **werkafspraak**, geen technische blokkade. Controleer de mounts voordat je onbetrouwbare code draait; laat geen secrets in de repository staan.
+**Niet op macOS installeren:** Python, CadQuery, Conda of Codex CLI. Die draaien in de devcontainer.
 
-## 8. Eerste checks en CAD-weergave
+## 2. Maak je eigen repository vanuit de template
 
-In de devcontainer:
+**Voorkeur: GitHub Template Repository**
+
+1. Open https://github.com/spud206/mechanical-cad-lab.
+2. Kies **Use this template → Create a new repository**. De eigenaar moet de bronrepository hiervoor eerst als template instellen via **Settings → General → Template repository**.
+3. Kies je eigen GitHub-account of organisatie, een projectspecifieke naam zoals `sensor-enclosure-cad`, en de gewenste zichtbaarheid. Gebruik normaal alleen de standaardbranch.
+4. Open de aangemaakte repository. Je repository moet de mappen `.devcontainer/`, `docs/`, `projects/` en `AGENTS.md` bevatten. Je repo heeft een eigen geschiedenis en `origin`.
+
+**Fallback als de templateknop nog niet beschikbaar is**
+
+Maak op GitHub een **lege** repository zonder README/.gitignore/licentie en voer op macOS uit (pas beide placeholders aan):
+
+```bash
+mkdir -p ~/Development
+cd ~/Development
+git clone https://github.com/EIGEN_ACCOUNT/EIGEN_CAD_PROJECT.git
+cd EIGEN_CAD_PROJECT
+TEMP_DIR="$(mktemp -d)"
+git clone https://github.com/spud206/mechanical-cad-lab.git "$TEMP_DIR/source"
+git -C "$TEMP_DIR/source" lfs pull
+rsync -a --exclude='.git/' "$TEMP_DIR/source/" ./
+rm -rf "$TEMP_DIR"
+git remote -v
+git add .
+git diff --cached --stat
+git commit -m "chore: bootstrap CAD project from template"
+git push -u origin main
+```
+
+Kopieer **nooit** de `.git`-map van de bronrepo. Je `origin` moet naar de **eigen** GitHub-repository verwijzen.
+
+## 3. Clone jouw project en open de devcontainer
+
+Als je GitHub's **Use this template** hebt gebruikt, clone dan je nieuwe repo op de Mac:
+
+```bash
+mkdir -p ~/Development
+cd ~/Development
+git clone https://github.com/EIGEN_ACCOUNT/EIGEN_CAD_PROJECT.git
+cd EIGEN_CAD_PROJECT
+git lfs install
+git remote -v
+git status --short --branch
+```
+
+Open deze **eigen repo** in VS Code met **File → Open Folder** (of `code .`, indien beschikbaar). Zorg dat Docker Desktop actief is en kies **Cmd+Shift+P → Dev Containers: Reopen in Container**.
+
+De eerste build downloadt de CAD-toolchain en kan veel ruimte gebruiken. Open daarna een VS Code-terminal **in de container** en controleer:
+
+```bash
+pwd
+whoami
+date
+git remote -v
+git status --short --branch
+python -c 'import cadquery; print(cadquery.__version__)'
+codex --version
+```
+
+De repository op macOS is gemount als de container-workspace; er wordt **geen tweede Git-clone** in de container gemaakt. De locale en tijdzone worden door de devcontainer ingesteld.
+
+## 4. Codex via normale browser-OAuth in Safari
+
+Start **binnen de container**:
+
+```bash
+codex login
+```
+
+Open de getoonde link in Safari op de Mac en log in met ChatGPT. De OAuth-callback naar `localhost:1455` (eventueel fallback `1457`) moet via het **Ports**-paneel in VS Code naar **dezelfde poort** in de devcontainer worden doorgestuurd. Controleer poortconflicten als de callback faalt. Gebruik voor deze workflow **geen device-code-login**.
+
+Controleer na aanmelden:
+
+```bash
+codex login status
+codex
+```
+
+Codex gebruikt een **containerlokale configuratie** en een persistent Docker-volume voor zijn login. De containerconfiguratie heeft brede uitvoeringsrechten en is bedoeld om herhaalde toestemmingvragen en nested bubblewrap-problemen te vermijden. Lees `docs/workflows/codex-permissions.md`, inspecteer mounts en plaats geen onnodige secrets in de container. `AGENTS.md` verbiedt commit/push zonder expliciete opdracht als **workflowregel**, niet als technische Git-blokkade.
+
+## 5. Controleer de CAD-toolchain
+
+In de container:
 
 ```bash
 make check
 make export-example
 ```
 
-Open OCP CAD Viewer in VS Code of gebruik de apart geconfigureerde viewer op poort 3939. Voor Jupyter is poort 8888 beschikbaar. Voer CAD-modellen en tests in de container uit; controleer afmetingen en visuele geometrie vóór vrijgave.
+Inspecteer het gegenereerde object met de **OCP CAD Viewer** in VS Code of de standalone viewer (`make viewer`, poort 3939). JupyterLab kan via `make jupyter` (poort 8888). Controleer oriëntatie en geometrie visueel, naast tests.
 
-## 9. Dagelijkse Git-werkwijze
+## 6. Start je eigen mechanical engineering-project
 
-1. Maak op de **Mac** een nieuwe branch (`git switch -c feature/naam`).
-2. Open/reopen de repo in Dev Containers; gebruik in de container gewoon `codex`.
-3. Codex past Python/CAD/tests/documentatie aan en valideert, **zonder automatisch te committen**.
-4. Controleer CAD-exports en visuele geometrie.
-5. Review wijzigingen en `git status` op de Mac; commit/push vanaf de **host**.
-6. Open een Pull Request in GitHub, laat checks draaien en merge via GitHub.
+1. Lees `AGENTS.md`, `docs/workflows/new-object.md` en de Codex-agentrollen in `.codex/roles/`.
+2. Maak een projectspecifieke map `projects/<objectnaam>/`; leg **afmetingen, toleranties, materiaal, productieproces en aannames** vast in `requirements.md`.
+3. Plaats leveranciersmodellen (bijv. STEP) in `references/`; maak parametrische CadQuery-Pythonbronnen in `models/` en relevante geometrische tests.
+4. Genereer STEP/STL/DXF vanuit de code. Commit alleen relevante, expliciet bedoelde bronbestanden of vrijgegeven CAD-artifacts; automatisch gegenereerde exports zijn doorgaans build-output.
+5. Laat Codex implementeren en testen binnen de container. Controleer relevante pasmaten en productieaspecten voordat je een ontwerp vrijgeeft.
 
-## 10. Veelvoorkomende problemen
+## 7. Dagelijkse Git-workflow
 
-- **Docker draait niet:** start Docker Desktop en controleer `docker version`.
-- **Container build faalt:** kies in Command Palette **Dev Containers: Rebuild Container** en bekijk **Dev Containers: Show Container Log**.
-- **OAuth-callback bereikt de container niet:** controleer of VS Code poort 1455 (of fallback 1457) lokaal exact naar dezelfde poort in de devcontainer forwardt, zonder poortconflict op de Mac. Start zo nodig `codex login` opnieuw.
-- **Toestemmingsvragen/bubblewrap:** verifieer `cat ~/.codex/config.toml` en `echo "$MECHCAD_DEVCONTAINER"`; gebruik de CLI **in** de container, niet een host-Codex of afzonderlijke IDE-extensieconfiguratie.
-- **Vreemde Git branch:** controleer `pwd`, `git rev-parse --show-toplevel` en of de hostmap in VS Code geopend is.
-- **Geen GitHub-toegang:** meld je aan op de host; wijzig geen permissies van de gehele host of mount geen volledige SSH-home in de container.
-- **CAD-viewer toont niets:** controleer of de extensie binnen de container is geïnstalleerd en of de viewer start; de geometrie-export werkt ook zonder GUI.
+Maak voor een nieuwe wijziging op de **Mac-host** een gerichte branch:
 
-## Officiële bronnen
+```bash
+git switch -c feature/first-enclosure
+```
 
-- VS Code Dev Containers: https://code.visualstudio.com/docs/devcontainers/tutorial
-- Docker Desktop voor Mac: https://docs.docker.com/desktop/setup/install/mac-install/
-- Codex-authenticatie: https://developers.openai.com/codex/auth
-- GitHub clone: https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository
+Werk met Codex in de devcontainer, voer tests uit en controleer de CAD-geometrie. Daarna **op de host**:
+
+```bash
+git status
+git diff --check
+git add <specifieke-bestanden>
+git diff --cached --stat
+git commit -m "feat: add parametric enclosure"
+git push -u origin feature/first-enclosure
+```
+
+Open een Pull Request naar de standaardbranch van **je eigen repository**. Template-updates komen niet automatisch in reeds gemaakte repositories terecht.
+
+## Problemen oplossen
+
+- `git lfs` is onbekend: voer op de Mac `brew install git-lfs && git lfs install` uit.
+- Docker of devcontainer start niet: controleer Docker Desktop, beschikbare schijfruimte en de Dev Containers-extensie; bekijk de buildlogs.
+- Browser-OAuth rondt niet af: controleer of VS Code de containerpoort 1455 (eventueel 1457) forwardt naar dezelfde lokale poort, en dat geen ander proces de poort bezet.
+- `origin` verwijst naar de template: stop vóór push en corrigeer de remote naar je eigen repo.
+- CadQuery import faalt: controleer devcontainer-build en actieve Conda-omgeving voordat je dependencies verandert.
+- Viewer toont niets: controleer of het model is gegenereerd en of de VS Code-viewer/poortforwarding actief is.
+
+Deze handleiding hoort bij de **gedeelde template**. Projectspecificaties en engineeringresultaten horen in de **eigen projectrepository** van de engineer.
