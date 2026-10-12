@@ -2,6 +2,10 @@
 
 A reproducible code-first mechanical engineering repository for CadQuery models, supplier/reference CAD, engineering notes, generated drawings/exports and Codex-assisted workflows.
 
+## New developer onboarding
+
+See [Quickstart for a clean macOS laptop](docs/QUICKSTART-macOS.md), including GitHub, VS Code, Docker Desktop, Dev Containers and normal browser-based ChatGPT OAuth login via forwarded localhost callback (1455/1457).
+
 ## Start
 
 1. Clone/create the repository on the **host Mac**.
@@ -38,6 +42,3 @@ See `AGENTS.md` and `docs/workflows/new-object.md` before starting engineering w
 
 In the **devcontainer terminal**, start Codex simply with `codex`. This enables no-approval, unrestricted execution **within the Docker container** and avoids relying on nested bubblewrap. Read [the security trade-offs](docs/workflows/codex-permissions.md) before use. The VS Code Codex extension has separate permissions controls.
 
-## New developer onboarding
-
-See [Quickstart for a clean macOS laptop](docs/QUICKSTART-macOS.md), including GitHub, VS Code, Docker Desktop, Dev Containers and normal browser-based ChatGPT OAuth login via forwarded localhost callback (1455/1457).
