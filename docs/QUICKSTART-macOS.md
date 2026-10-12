@@ -18,14 +18,7 @@ Deze handleiding gaat uit van een lege Mac (Apple Silicon of Intel), een bestaan
 
 **Niet installeren op de host:** Python, conda/mamba, CadQuery, OpenCascade/OCP, Node.js of Codex CLI. Die zitten in de devcontainer.
 
-## 3. Configureer VS Code
-
-1. Open VS Code en ga naar **Extensions** (`Cmd+Shift+X`).
-2. Installeer **Dev Containers** van Microsoft (`ms-vscode-remote.remote-containers`).
-3. Open de Command Palette (`Cmd+Shift+P`), typ **Shell Command: Install 'code' command in PATH** en voer dit uit als die opdracht beschikbaar is. Dit is optioneel; VS Code kan de repo ook via **File > Open Folder** openen.
-4. De repositoryconfiguratie installeert de extra Python-, Jupyter-, Ruff- en CAD-viewerextensies automatisch in de container.
-
-## 4. Meld je aan bij GitHub en clone op de host
+## 3. Meld je aan bij GitHub en clone op de host
 
 1. Open Terminal **op de Mac** (niet in een container).
 2. Configureer Git-identiteit (vervang de voorbeeldwaarden):
@@ -42,16 +35,23 @@ Deze handleiding gaat uit van een lege Mac (Apple Silicon of Intel), een bestaan
    ```bash
    mkdir -p ~/Development
    cd ~/Development
-   git clone https://github.com/ORGANISATIE/mechanical-cad-lab.git
+   git clone https://github.com/spud206/mechanical-cad-lab.git
    cd mechanical-cad-lab
    git lfs pull
    ```
 
    Vervang `ORGANISATIE` en de repositorynaam door de daadwerkelijke GitHub-URL. Meld je aan via je GitHub-credential manager/browser wanneer Git hierom vraagt. GitHub accepteert geen gewoon accountwachtwoord voor HTTPS Git-operaties.
 
-4. Controleer dat `.git` op de host aanwezig is: `git status -sb`. Gebruik **niet** de VS Code-optie 'Clone Repository in Container Volume'; we willen één working tree op de Mac.
+## 4. Configureer VS Code
 
-**Voor het eerste publiceren van deze starter:** maak op GitHub een lege repository en plaats de starterbestanden lokaal in `~/Development/mechanical-cad-lab`, initialiseer Git, commit en push op de Mac. De clone-instructies hierboven gelden zodra die repository bestaat.
+1. Open VS Code en ga naar **Extensions** (`Cmd+Shift+X`).
+2. Installeer **Dev Containers** van Microsoft (`ms-vscode-remote.remote-containers`).
+3. Open de Command Palette (`Cmd+Shift+P`), typ **Shell Command: Install 'code' command in PATH** en voer dit uit als die opdracht beschikbaar is. Dit is optioneel; VS Code kan de repo ook via **File > Open Folder** openen.
+4. De repositoryconfiguratie installeert de extra Python-, Jupyter-, Ruff- en CAD-viewerextensies automatisch in de container.
+
+
+
+4. Controleer dat `.git` op de host aanwezig is: `git status -sb`. Gebruik **niet** de VS Code-optie 'Clone Repository in Container Volume'; we willen één working tree op de Mac.
 
 ## 5. Start de devcontainer
 
