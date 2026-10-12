@@ -12,13 +12,18 @@ class BoundingBox:
     z: float
 
 
+def _as_shape(value: cq.Workplane | cq.Shape) -> cq.Shape:
+    obj = value.val() if isinstance(value, cq.Workplane) else value
+    if not isinstance(obj, cq.Shape):
+        raise TypeError("Expected a CadQuery shape")
+    return obj
+
+
 def bounding_box(shape: cq.Workplane | cq.Shape) -> BoundingBox:
-    obj = shape.val() if isinstance(shape, cq.Workplane) else shape
-    bb = obj.BoundingBox()
+    bb = _as_shape(shape).BoundingBox()
     return BoundingBox(bb.xlen, bb.ylen, bb.zlen)
 
 
 def assert_valid(shape: cq.Workplane | cq.Shape) -> None:
-    obj = shape.val() if isinstance(shape, cq.Workplane) else shape
-    if not obj.isValid():
+    if not _as_shape(shape).isValid():
         raise AssertionError("CadQuery shape is not valid")
