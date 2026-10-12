@@ -1,5 +1,5 @@
-from pathlib import Path
 import importlib.util
+from pathlib import Path
 
 from mechcad.export import export_step, export_stl
 from mechcad.validation import assert_valid
