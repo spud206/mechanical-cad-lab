@@ -1,0 +1,22 @@
+[project]
+name = "mechanical-cad-lab"
+version = "0.1.0"
+description = "Parametric mechanical engineering and CAD repository using CadQuery and Codex agents."
+requires-python = ">=3.12,<3.13"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_unused_configs = true
+check_untyped_defs = true

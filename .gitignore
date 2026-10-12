@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+.DS_Store
+
+# Generated CAD exports by default. Selected release artifacts may be force-added.
+projects/*/exports/*
+!projects/*/exports/.gitkeep
+
+# CAD viewer/editor local state
+.vscode/*.local.json

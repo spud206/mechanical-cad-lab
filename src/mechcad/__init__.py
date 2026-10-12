@@ -1,0 +1,1 @@
+"""Reusable mechanical CAD helpers."""

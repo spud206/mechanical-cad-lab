@@ -1,0 +1,68 @@
+{
+  "name": "Mechanical CAD Lab",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "remoteUser": "vscode",
+  "containerEnv": {
+    "TZ": "Europe/Amsterdam",
+    "LANG": "en_US.UTF-8",
+    "LC_ALL": "en_US.UTF-8",
+    "PYTHONUNBUFFERED": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "MECHCAD_DEVCONTAINER": "1"
+  },
+  "mounts": [
+    "source=mechanical-cad-lab-codex-home,target=/home/vscode/.codex,type=volume"
+  ],
+  "forwardPorts": [
+    1455,
+    1457,
+    3939,
+    8888
+  ],
+  "portsAttributes": {
+    "1455": {
+      "label": "Codex OAuth localhost callback",
+      "onAutoForward": "silent",
+      "requireLocalPort": true
+    },
+    "1457": {
+      "label": "Codex OAuth fallback callback",
+      "onAutoForward": "silent",
+      "requireLocalPort": true
+    },
+    "3939": {
+      "label": "OCP CAD Viewer",
+      "onAutoForward": "notify"
+    },
+    "8888": {
+      "label": "JupyterLab",
+      "onAutoForward": "notify"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/conda/envs/cad/bin/python",
+        "python.terminal.activateEnvironment": true,
+        "editor.formatOnSave": true,
+        "files.trimTrailingWhitespace": true,
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "charliermarsh.ruff",
+        "eamodio.gitlens",
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        "bernhard-42.ocp-cad-viewer"
+      ]
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh"
+}

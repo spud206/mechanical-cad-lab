@@ -1,0 +1,25 @@
+name: cad
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - cadquery
+  - jupyterlab
+  - ipykernel
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib
+  - trimesh
+  - meshio
+  - pyyaml
+  - typer
+  - rich
+  - pytest
+  - pytest-cov
+  - ruff
+  - mypy
+  - pip
+  - pip:
+      - ocp-vscode
+      - ocp-viewer

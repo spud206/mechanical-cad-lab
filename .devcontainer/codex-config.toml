@@ -1,0 +1,4 @@
+# Container-local Codex defaults, installed to /home/vscode/.codex/config.toml.
+# Do NOT apply to the macOS host.
+approval_policy = "never"
+sandbox_mode = "danger-full-access"

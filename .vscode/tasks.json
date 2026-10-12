@@ -1,0 +1,9 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {"label": "CAD: check", "type": "shell", "command": "make check", "group": "test", "problemMatcher": []},
+    {"label": "CAD: export example", "type": "shell", "command": "make export-example", "problemMatcher": []},
+    {"label": "CAD: viewer", "type": "shell", "command": "make viewer", "isBackground": true, "problemMatcher": []},
+    {"label": "CAD: JupyterLab", "type": "shell", "command": "make jupyter", "isBackground": true, "problemMatcher": []}
+  ]
+}
