@@ -1,18 +1,25 @@
-# Mechanical CAD Lab
+# Mechanical CAD Lab — reusable engineering template
 
-A reproducible code-first mechanical engineering repository for CadQuery models, supplier/reference CAD, engineering notes, generated drawings/exports and Codex-assisted workflows.
+A code-first mechanical engineering **template repository** for CadQuery, supplier/reference CAD files, drawings, tests, exports and Codex-assisted engineering in a VS Code devcontainer.
 
-## New developer onboarding
+## For new engineers: create your own project repository
 
-See [Quickstart for a clean macOS laptop](docs/QUICKSTART-macOS.md), including GitHub, VS Code, Docker Desktop, Dev Containers and normal browser-based ChatGPT OAuth login via forwarded localhost callback (1455/1457).
+**Do not develop your personal CAD project directly in this repository.** Create your own repository using **Use this template → Create a new repository**, then clone **your own** repository onto the Mac and open it in VS Code Dev Containers.
 
-## Start
+Read the [full macOS quickstart](docs/QUICKSTART-macOS.md), covering VS Code, Docker Desktop, Git LFS, repo creation, browser-based Codex OAuth (forwarded localhost port 1455), a first CAD object and host-side Git workflow.
 
-1. Clone/create the repository on the **host Mac**.
-2. Open the host repository folder in VS Code.
-3. Choose **Dev Containers: Reopen in Container**.
-4. The host working tree (including `.git`) is mounted as the devcontainer workspace; do not make a second clone inside the container.
-5. Check:
+This template is the source for project bootstrapping; it does **not** automatically synchronize changes to already created project repositories.
+
+## Repository structure and tooling
+
+- `.devcontainer/`: Ubuntu 24.04, Python 3.12/Conda, CadQuery/OCP, viewer, Jupyter, Codex CLI and developer tooling
+- `.codex/roles/` and `AGENTS.md`: agent roles and engineering/review contracts
+- `projects/`: separate objects, requirements, reference CAD, Python models, drawings and generated exports
+- `src/mechcad/`: shared engineering helpers
+- `tests/`: deterministic geometry and software checks
+- `docs/workflows/`: modeling and security guidance
+
+In your **own devcontainer**:
 
 ```bash
 python -c 'import cadquery; print(cadquery.__version__)'
@@ -21,24 +28,10 @@ make check
 make export-example
 ```
 
-For visualization, use the OCP CAD Viewer VS Code extension or run `make viewer` and forward port 3939. JupyterLab is available with `make jupyter` on port 8888.
+Use the OCP CAD Viewer VS Code extension, or `make viewer` (port 3939). `make jupyter` opens JupyterLab (port 8888).
 
-## Environment
+## Codex and Git boundaries
 
-- Ubuntu 24.04 devcontainer
-- Python 3.12 in a Miniforge/conda environment
-- CadQuery / OpenCascade stack
-- OCP CAD Viewer + standalone viewer
-- JupyterLab
-- pytest, Ruff, mypy
-- NumPy/SciPy/trimesh/meshio and common engineering helpers
-- Git, Git LFS, GitHub CLI
-- Codex CLI
-- timezone `Europe/Amsterdam`; UTF-8 locales installed
+Codex is launched with `codex` in the devcontainer. Normal browser-based `codex login` uses a forwarded localhost OAuth callback, and container-local Codex settings avoid recurring approval prompts/nested bubblewrap. Review [permissions and security](docs/workflows/codex-permissions.md): broad in-container permissions are intentional and must be bounded by mounts and Docker isolation.
 
-See `AGENTS.md` and `docs/workflows/new-object.md` before starting engineering work.
-
-## Codex permissions and bubblewrap
-
-In the **devcontainer terminal**, start Codex simply with `codex`. This enables no-approval, unrestricted execution **within the Docker container** and avoids relying on nested bubblewrap. Read [the security trade-offs](docs/workflows/codex-permissions.md) before use. The VS Code Codex extension has separate permissions controls.
-
+The **host Mac** owns the project's Git working tree. Codex edits/tests in the devcontainer, while final review, commit and push normally take place on the host; see `AGENTS.md`. Do not clone the repository a second time inside the container.
